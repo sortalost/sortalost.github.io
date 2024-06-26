@@ -16,8 +16,8 @@
     dataType:'json',
     method: 'GET',
     success: function(response) {
-        data = JSON.stringify(response);
-        $('html').text(data)
+        data = JSON.parse(JSON.stringify(response));
+        $('#main').innerHTML('<video><source src='+ data[0].data.children[0].data.secure_media.reddit_video.fallback_url +'></video>')
     },
     error: function(xhr, status, error) {
         // Handle errors here
