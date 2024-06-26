@@ -1,0 +1,27 @@
+<html>
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+  <div>
+    <p id="main">
+      nothing...
+    </p>
+  </div>
+</body>
+<script>
+  $.ajax({
+    url: 'https://www.reddit.com/r/fightporn/random.json',
+    method: 'GET',
+    success: function(response) {
+        console.log(response);
+        $('#main').text(response)
+    },
+    error: function(xhr, status, error) {
+        // Handle errors here
+        console.error(status, error);
+    }
+});
+</script>
+</html>
