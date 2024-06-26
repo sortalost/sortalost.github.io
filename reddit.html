@@ -13,6 +13,7 @@
 <script>
   $.ajax({
     url: 'https://www.reddit.com/r/fightporn/random.json',
+    dataType:'json',
     method: 'GET',
     success: function(response) {
         console.log(response);
