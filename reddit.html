@@ -7,6 +7,8 @@
   <div>
     <p id="main">
       nothing...
+      <video id="vvv">
+      </video>
     </p>
   </div>
 </body>
@@ -17,7 +19,7 @@
     method: 'GET',
     success: function(response) {
         data = JSON.parse(JSON.stringify(response));
-      var video = document.getElementById('video');
+      var video = document.getElementById('vvv');
       var source = document.createElement('source');
       source.setAttribute('src', data[0].data.children[0].data.secure_media.reddit_video.fallback_url); //use your AJAX response URL here.
       video.appendChild(source);
