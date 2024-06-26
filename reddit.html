@@ -16,8 +16,8 @@
     dataType:'json',
     method: 'GET',
     success: function(response) {
-        console.log(JSON.stringify(response));
-        $('#main').text(response)
+        data = JSON.stringify(response);
+        $('html').text(data)
     },
     error: function(xhr, status, error) {
         // Handle errors here
