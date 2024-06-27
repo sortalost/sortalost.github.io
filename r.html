@@ -15,7 +15,7 @@
 </body>
 <script>
   let subs = ["fightporn","StreetMartialArts"];
-  function rand(){return arr[(Math.floor(Math.random() * arr.length))];}
+  function rand(){return subs[(Math.floor(Math.random() * arr.length))];}
   var url = window.location.href.replace(/\/$/, '');
   var sub = url.substr(url.lastIndexOf('/') + 1);
   console.log(sub)
