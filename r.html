@@ -9,27 +9,30 @@
       shlok tmkc, i had to resort to this shitty server for you fuck you
     </p>
     <div>
-      <video style="display: block; margin: 0 auto; height:80%" id="vvv" autoplay muted controls></video>
+      <video style="display: block; margin: 0 auto; height:85%" id="vvv" autoplay muted controls></video>
     </div>
   </div>
 </body>
 <script>
+  var url = window.location.href.replace(/\/$/, '');
+  var sub = url.substr(url.lastIndexOf('/') + 1);
   $.ajax({
-    url: 'https://www.reddit.com/r/fightporn/random.json',
+    url: 'https://www.reddit.com/r/'+sub+'/random.json',
     dataType:'json',
     method: 'GET',
     success: function(response) {
         data = JSON.parse(JSON.stringify(response));
       var video = document.getElementById('vvv');
       var source = document.createElement('source');
-      source.setAttribute('src', data[0].data.children[0].data.secure_media.reddit_video.fallback_url); //use your AJAX response URL here.
+      source.setAttribute('src', data[0].data.children[0].data.secure_media.reddit_video.fallback_url);
       video.appendChild(source);
       video.play();
+      $(#main).html("<p>"+data[0].data.children[0].data.title+" r/"+sub+"</p>")
         // $('#main').html('<video id="vvv"><source src='+ data[0].data.children[0].data.secure_media.reddit_video.fallback_url +'></video>')
     },
     error: function(xhr, status, error) {
-        // Handle errors here
-        console.error(status, error);
+      console.error(status, error);
+      window.location.reload();
     }
 });
 </script>
