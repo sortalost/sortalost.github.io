@@ -16,6 +16,7 @@
 <script>
   var url = window.location.href.replace(/\/$/, '');
   var sub = url.substr(url.lastIndexOf('/') + 1);
+  console.log(sub)
   $.ajax({
     url: 'https://www.reddit.com/r/'+sub+'/random.json',
     dataType:'json',
@@ -27,7 +28,7 @@
       source.setAttribute('src', data[0].data.children[0].data.secure_media.reddit_video.fallback_url);
       video.appendChild(source);
       video.play();
-      $(#main).html("<p>"+data[0].data.children[0].data.title+" r/"+sub+"</p>")
+      $('#main').html("<p>"+data[0].data.children[0].data.title+" r/"+sub+"</p>")
         // $('#main').html('<video id="vvv"><source src='+ data[0].data.children[0].data.secure_media.reddit_video.fallback_url +'></video>')
     },
     error: function(xhr, status, error) {
