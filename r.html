@@ -14,11 +14,15 @@
   </div>
 </body>
 <script>
+  let subs = ["fightporn","StreetMartialArts"];
+  function rand(){return arr[(Math.floor(Math.random() * arr.length))];}
   var url = window.location.href.replace(/\/$/, '');
   var sub = url.substr(url.lastIndexOf('/') + 1);
   console.log(sub)
+  subc=rand()
+  console.log(subc)
   $.ajax({
-    url: 'https://www.reddit.com/r/'+sub+'/random.json',
+    url: 'https://www.reddit.com/r/'+subc+'/random.json',
     dataType:'json',
     method: 'GET',
     success: function(response) {
@@ -28,7 +32,7 @@
       source.setAttribute('src', data[0].data.children[0].data.secure_media.reddit_video.fallback_url);
       video.appendChild(source);
       video.play();
-      $('#main').html("<p>"+data[0].data.children[0].data.title+" r/"+sub+"</p>")
+      $('#main').html("<p>"+data[0].data.children[0].data.title+" r/"+subc+"</p>")
         // $('#main').html('<video id="vvv"><source src='+ data[0].data.children[0].data.secure_media.reddit_video.fallback_url +'></video>')
     },
     error: function(xhr, status, error) {
