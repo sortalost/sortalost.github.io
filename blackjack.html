@@ -1,177 +1,221 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blackjack Game</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body {
-      background-color: black;
-      color: #00ff00;
-      font-family: monospace;
-      text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-    }
-    .card {
-      white-space: pre;
-    }
-    .hidden { display: none; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: black;
+            color: #00ff00;
+            font-family: monospace;
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+        .card {
+            font-family: monospace;
+            white-space: pre;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            width: auto !important;
+            height: auto !important;
+        }
+        .suit-red {
+            color: #ff5555;
+        }
+        .suit-black {
+            color: #55ff55;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container mx-auto px-4 py-8 max-w-3xl">
-    <h1 class="text-3xl font-bold mb-4 text-center">♣ BLACKJACK ♠</h1>
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-4 text-center">♣ BLACKJACK ♠</h1>
 
-    <div id="mainMenu">
-      <button id="randomBtn" class="w-full mb-4 border border-green-500 px-4 py-2">[1] Random Match</button>
-      <button id="roomToggle" class="w-full mb-2 border border-green-500 px-4 py-2">[2] Create/Join Room</button>
-      <div id="roomOptions" class="hidden mt-4">
-        <input id="roomInput" class="w-full mb-2 border border-green-500 px-4 py-2 bg-black" placeholder="Room Name"/>
-        <button id="createBtn" class="w-full mb-2 border border-green-500 px-4 py-2">[C] Create Room</button>
-        <button id="joinBtn" class="w-full mb-4 border border-green-500 px-4 py-2">[J] Join Room</button>
-      </div>
-      <div id="score" class="text-center"></div>
+        <!-- Main Menu -->
+        <div id="mainMenu">
+            <div class="text-center mb-6">
+                <div id="playerName" class="text-lg font-bold"></div>
+                <div id="playerScore" class="text-md"></div>
+            </div>
+            <div class="flex flex-col space-y-4">
+                <input type="text" id="roomInput" class="bg-black border border-green-500 text-green-500 px-4 py-2 text-center" placeholder="Room name">
+                <button id="randomBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Random Opponent</button>
+                <button id="createBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Create Room</button>
+                <button id="joinBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Join Room</button>
+            </div>
+            <div id="roomError" class="text-red-500 text-center mt-4 hidden"></div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" class="hidden mt-6">
+            <div id="matchInfo" class="text-center mb-4"></div>
+            <div id="playerHand" class="whitespace-pre text-sm mb-4"></div>
+            <div id="handValue" class="text-center mb-2"></div>
+            <div id="opponentStatus" class="text-center mb-4"></div>
+            <div class="flex space-x-2 justify-center mb-4" id="actionButtons">
+                <button id="hitBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Hit</button>
+                <button id="standBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Stand</button>
+            </div>
+            <div id="opponentHand" class="whitespace-pre text-sm text-center"></div>
+            <div id="result" class="text-center font-bold text-lg mt-2"></div>
+            <div class="text-center mt-4">
+                <button id="backBtn" class="bg-black border border-green-500 text-green-500 px-4 py-2">Main Menu</button>
+            </div>
+        </div>
     </div>
 
-    <div id="game" class="hidden">
-      <div id="state" class="mb-4"></div>
-      <div class="flex space-x-2">
-        <button id="hit" class="flex-1 border border-green-500 px-4 py-2">[H] Hit</button>
-        <button id="stand" class="flex-1 border border-green-500 px-4 py-2">[S] Stand</button>
-      </div>
-      <div id="status" class="text-center mt-4"></div>
-      <button id="backBtn" class="w-full mt-6 border border-green-500 px-4 py-2">Return to Menu</button>
-    </div>
-  </div>
-
-  <script>
+    <script>
     const API = "https://sortalost.is-a.dev/bj_api";
-    let playerId, room, playerName, score = { wins: 0, games: 0 };
+    let playerName = "", playerId = "", room = "";
+    let score = { wins: 0, games: 0 };
 
     async function getWords(n = 2) {
-      try {
-        const r = await fetch("https://sortalost.github.io/sources/files/words.txt");
-        const words = (await r.text()).split("\n").filter(Boolean);
-        const picks = [];
-        while (picks.length < n) {
-          const w = words[Math.floor(Math.random() * words.length)].trim();
-          if (!picks.includes(w)) picks.push(w);
+        try {
+            const res = await fetch("https://sortalost.github.io/sources/files/words.txt");
+            const words = (await res.text()).split("\\n").filter(Boolean);
+            return Array.from({length: n}, () => words[Math.floor(Math.random() * words.length)]).join(" ");
+        } catch {
+            return "Player" + Math.floor(Math.random() * 999);
         }
-        return picks.join(" ");
-      } catch {
-        return `player_${Math.floor(Math.random() * 1000)}`;
-      }
     }
 
-    function renderCard(c) {
-      const rank = c.slice(0, -1);
-      const suit = c.slice(-1);
-      return `
-┌───────┐
-│${rank.padEnd(2)}     │
-│   ${suit}   │
-│     ${rank.padStart(2)}│
-└───────┘
-      `;
+    function renderCard(card) {
+        if (!card) return "";
+        const rank = card.slice(0, -1);
+        const suit = card.slice(-1);
+        return `┌───────┐\\n│${rank.padEnd(2)}     │\\n│   ${suit}   │\\n│     ${rank.padStart(2)}│\\n└───────┘`;
     }
 
-    function renderHand(hand, label) {
-      const cards = hand.map(renderCard).join("\n");
-      return `<pre class="card">${label}:\n${cards}</pre>`;
+    function renderHand(hand) {
+        return hand.map(renderCard).join("\\n");
     }
 
     async function fetchState() {
-      const res = await fetch(`${API}/state?room=${room}&player=${playerId}`);
-      return await res.json();
+        const res = await fetch(`${API}/state?room=${room}&player=${playerId}`);
+        return await res.json();
     }
 
-    async function updateState() {
-      const data = await fetchState();
-      const div = document.getElementById("state");
-      div.innerHTML = `${data.your_name} vs ${data.opponent_name}<br><br>`;
-      div.innerHTML += renderHand(data.your_hand, "Your Hand");
-      div.innerHTML += `<br>Hand value: ${data.your_value}<br><br>`;
-
-      if (data.status === "finished") {
-        div.innerHTML += renderHand(data.opponent_hand, "Opponent's Hand");
-        div.innerHTML += `<br><b>${data.winner === playerId ? "YOU WIN!" : data.winner === "draw" ? "PUSH (Draw)" : "You Lose."}</b>`;
-        score.games += 1;
-        if (data.winner === playerId) score.wins++;
-        document.getElementById("status").innerText = "Game Over.";
-        return true;
-      } else {
-        document.getElementById("status").innerText = data.turn === playerId ? "Your turn" : "Waiting for opponent...";
-        return data.turn === playerId;
-      }
-    }
-
-    async function waitForOpponent() {
-      while (true) {
+    async function showGameState() {
         const state = await fetchState();
-        if (state.status !== "waiting") break;
-        await new Promise(r => setTimeout(r, 2000));
-      }
+        document.getElementById("matchInfo").textContent = `${state.your_name} vs ${state.opponent_name}`;
+        document.getElementById("playerScore").textContent = `Score: ${score.wins}/${score.games}`;
+        document.getElementById("playerHand").textContent = renderHand(state.your_hand);
+        document.getElementById("handValue").textContent = `Your Hand Value: ${state.your_value}`;
+
+        const isMyTurn = state.turn === playerId && state.status !== 'finished';
+        document.getElementById("actionButtons").classList.toggle("hidden", !isMyTurn);
+        document.getElementById("opponentStatus").textContent = isMyTurn ? "Your turn!" : "Waiting for opponent...";
+
+        if (state.status === "finished") {
+            document.getElementById("opponentHand").textContent = "Opponent's Hand:\\n" + renderHand(state.opponent_hand);
+            document.getElementById("result").textContent = state.winner === playerId ? "YOU WIN!" : state.winner === "draw" ? "DRAW" : "YOU LOSE!";
+            score.games++;
+            if (state.winner === playerId) score.wins++;
+            document.getElementById("actionButtons").classList.add("hidden");
+        }
+
+        return state.status === "finished";
     }
 
     async function gameLoop() {
-      document.getElementById("mainMenu").classList.add("hidden");
-      document.getElementById("game").classList.remove("hidden");
-      while (true) {
-        const yourTurn = await updateState();
-        if (document.getElementById("status").innerText === "Game Over.") break;
-        if (!yourTurn) await new Promise(r => setTimeout(r, 2000));
-      }
+        while (true) {
+            const over = await showGameState();
+            if (over) break;
+            await new Promise(r => setTimeout(r, 2000));
+        }
     }
 
-    async function playRandom() {
-      const res = await fetch(`${API}/random_match`, {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ name: playerName })
-      });
-      const data = await res.json();
-      room = data.room;
-      playerId = data.player;
-      await gameLoop();
+    async function play(type) {
+        room = document.getElementById("roomInput").value.trim();
+        const path = type === "create" ? "create_room" : "join_room";
+        const res = await fetch(`${API}/${path}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ room, name: playerName })
+        });
+        if (!res.ok) {
+            document.getElementById("roomError").textContent = (await res.json()).error;
+            document.getElementById("roomError").classList.remove("hidden");
+            return;
+        }
+
+        playerId = type === "create" ? "p1" : "p2";
+        document.getElementById("mainMenu").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+
+        if (playerId === "p1") {
+            while (true) {
+                const state = await fetchState();
+                if (state.status !== "waiting") break;
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        gameLoop();
     }
 
-    async function playRoom(create) {
-      room = document.getElementById("roomInput").value.trim();
-      const route = create ? "create_room" : "join_room";
-      const res = await fetch(`${API}/${route}`, {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ room, name: playerName })
-      });
-      if (!res.ok) return alert((await res.json()).error);
-      playerId = create ? "p1" : "p2";
-      if (create) await waitForOpponent();
-      await gameLoop();
+    async function randomMatch() {
+        document.getElementById("mainMenu").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+
+        while (true) {
+            const res = await fetch(`${API}/random_match`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: playerName })
+            });
+            const data = await res.json();
+            if (data.room) {
+                room = data.room;
+                playerId = data.player;
+                break;
+            }
+            await new Promise(r => setTimeout(r, 1000));
+        }
+
+        gameLoop();
     }
 
-    async function main() {
-      playerName = await getWords();
-      document.getElementById("score").innerText = `Your name: ${playerName}`;
-      document.getElementById("randomBtn").onclick = playRandom;
-      document.getElementById("roomToggle").onclick = () => {
-        document.getElementById("roomOptions").classList.remove("hidden");
-      };
-      document.getElementById("createBtn").onclick = () => playRoom(true);
-      document.getElementById("joinBtn").onclick = () => playRoom(false);
-      document.getElementById("hit").onclick = () => fetch(`${API}/action`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, player: playerId, move: "hit" })
-      });
-      document.getElementById("stand").onclick = () => fetch(`${API}/action`, {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, player: playerId, move: "stand" })
-      });
-      document.getElementById("backBtn").onclick = () => location.reload();
-    }
+    document.addEventListener("DOMContentLoaded", async () => {
+        playerName = await getWords();
+        document.getElementById("playerName").textContent = playerName;
 
-    main();
-  </script>
+        document.getElementById("randomBtn").onclick = randomMatch;
+        document.getElementById("createBtn").onclick = () => play("create");
+        document.getElementById("joinBtn").onclick = () => play("join");
+
+        document.getElementById("hitBtn").onclick = async () => {
+            await fetch(`${API}/action`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ room, player: playerId, move: "hit" })
+            });
+            showGameState();
+        };
+
+        document.getElementById("standBtn").onclick = async () => {
+            await fetch(`${API}/action`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ room, player: playerId, move: "stand" })
+            });
+            showGameState();
+        };
+
+        document.getElementById("backBtn").onclick = () => {
+            document.getElementById("gameScreen").classList.add("hidden");
+            document.getElementById("mainMenu").classList.remove("hidden");
+            document.getElementById("roomError").classList.add("hidden");
+            document.getElementById("roomInput").value = "";
+            document.getElementById("result").textContent = "";
+            document.getElementById("opponentHand").textContent = "";
+        };
+    });
+    </script>
 </body>
 </html>
