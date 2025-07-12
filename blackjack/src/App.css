@@ -1,45 +1,111 @@
+/* App.css */
+
 body {
   margin: 0;
-  background-color: #0d1117;
-  color: #e6edf3;
   font-family: 'Segoe UI', sans-serif;
+  background-color: #121212;
+  color: #f5f5f5;
 }
 
-.App {
+.container {
+  padding: 2rem;
   text-align: center;
-  padding: 40px;
 }
 
-input {
-  margin: 8px;
-  padding: 10px;
-  background: #161b22;
-  color: white;
-  border: 1px solid #30363d;
+h1 {
+  color: #facc15; /* yellow accent */
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.menu input {
+  padding: 0.6rem;
+  margin-right: 0.5rem;
   border-radius: 4px;
+  border: none;
+  width: 200px;
 }
 
-button {
-  margin: 10px;
-  padding: 12px 20px;
-  background: #238636;
+.menu button {
+  padding: 0.6rem 1rem;
+  margin: 0.5rem;
+  background-color: #1e40af;
   color: white;
-  font-weight: bold;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  font-weight: bold;
 }
 
-button:hover {
-  background: #2ea043;
+.menu button:hover {
+  background-color: #2563eb;
 }
 
-.button-row {
-  margin-top: 20px;
+.error {
+  color: #f87171;
+  margin-top: 0.5rem;
+}
+
+.game {
+  margin-top: 2rem;
+}
+
+.names {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
 .score {
-  margin-top: 20px;
-  color: #8b949e;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  color: #94a3b8;
+}
+
+.hand {
+  margin-bottom: 1.5rem;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  font-size: 1.5rem;
+  padding: 1rem;
+  background-color: #1e293b;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  width: 60px;
+  text-align: center;
+}
+
+.actions button {
+  padding: 0.7rem 1.2rem;
+  margin: 0.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #22c55e;
+  color: black;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actions button:hover {
+  background-color: #4ade80;
+}
+
+.result {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+}
+
+.result p {
+  font-weight: bold;
+  color: #facc15;
 }

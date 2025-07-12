@@ -1,157 +1,175 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
-const API = 'https://sortalost.is-a.dev/bj_api';
+const API = "https://sortalost.is-a.dev/bj_api";
 
-function App() {
-  const [name, setName] = useState(localStorage.getItem('bj_name') || '');
-  const [room, setRoom] = useState('');
-  const [player, setPlayer] = useState('');
-  const [status, setStatus] = useState('menu');
-  const [game, setGame] = useState(null);
+export default function App() {
+  const [playerName, setPlayerName] = useState("");
+  const [player, setPlayer] = useState("");
+  const [room, setRoom] = useState("");
+  const [gameState, setGameState] = useState(null);
+  const [turn, setTurn] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [score, setScore] = useState({ wins: 0, games: 0 });
-  const [queueMsgShown, setQueueMsgShown] = useState(false);
 
-  const joinRoom = async (asPlayer1) => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (room && player) fetchState();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [room, player]);
+
+  const fetchState = async () => {
     try {
-      if (asPlayer1) {
-        const res = await fetch(`${API}/create_room`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ room, name })
-        });
-        if (!res.ok) throw await res.json();
-        setPlayer('p1');
-      } else {
-        const res = await fetch(`${API}/join_room`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ room, name })
-        });
-        if (!res.ok) throw await res.json();
-        setPlayer('p2');
-      }
-      setStatus('game');
+      const res = await fetch(`${API}/state?room=${room}&player=${player}`);
+      const data = await res.json();
+      setGameState(data);
+      setTurn(data.turn === player);
     } catch (err) {
-      alert(err.error || 'Error joining room');
+      setError("Failed to fetch game state.");
     }
   };
 
-  const playWithRandom = async () => {
-    setStatus('searching');
-    while (true) {
-      const res = await fetch(`${API}/random_match`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
-      });
-      const data = await res.json();
-      if (data.room) {
-        setRoom(data.room);
-        setPlayer(data.player);
-        setStatus('game');
-        return;
-      }
-      await new Promise(r => setTimeout(r, 2000));
+  const startGame = async () => {
+    if (!playerName) return setError("Enter your name");
+    const roomName = prompt("Enter room name");
+    if (!roomName) return;
+    setLoading(true);
+    const res = await fetch(`${API}/create_room`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ room: roomName, name: playerName }),
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (res.ok) {
+      setRoom(roomName);
+      setPlayer("p1");
+    } else {
+      setError(data.error);
     }
+  };
+
+  const joinGame = async () => {
+    if (!playerName) return setError("Enter your name");
+    const roomName = prompt("Enter room name");
+    if (!roomName) return;
+    setLoading(true);
+    const res = await fetch(`${API}/join_room`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ room: roomName, name: playerName }),
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (res.ok) {
+      setRoom(roomName);
+      setPlayer("p2");
+    } else {
+      setError(data.error);
+    }
+  };
+
+  const sendAction = async (move) => {
+    await fetch(`${API}/action`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ room, player, move }),
+    });
+    fetchState();
+  };
+
+  const renderCards = (cards) => {
+    return cards.map((card, idx) => (
+      <div className="card" key={idx}>
+        {card}
+      </div>
+    ));
+  };
+
+  const resetGame = () => {
+    setRoom("");
+    setPlayer("");
+    setGameState(null);
+    setError("");
+  };
+
+  const handleGameOver = () => {
+    const win = gameState.winner;
+    const newScore = { ...score, games: score.games + 1 };
+    if (win === player) newScore.wins += 1;
+    setScore(newScore);
   };
 
   useEffect(() => {
-    let interval;
-    if (status === 'game') {
-      interval = setInterval(async () => {
-        const res = await fetch(`${API}/state?room=${room}&player=${player}`);
-        const data = await res.json();
-        setGame(data);
-      }, 1000);
+    if (gameState?.status === "finished") {
+      handleGameOver();
     }
-    return () => clearInterval(interval);
-  }, [status, room, player]);
-
-  const makeMove = async (move) => {
-    await fetch(`${API}/action`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ room, player, move })
-    });
-  };
-
-  if (status === 'menu') {
-    return (
-      <div className="App">
-        <h1>🃏 Blackjack WAN</h1>
-        <input placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} />
-        <input placeholder="Room Name" value={room} onChange={e => setRoom(e.target.value)} />
-        <div className="button-row">
-          <button onClick={() => {
-            if (name.trim()) {
-              localStorage.setItem('bj_name', name);
-              joinRoom(true);
-            }
-          }}>Create Room</button>
-          <button onClick={() => {
-            if (name.trim()) {
-              localStorage.setItem('bj_name', name);
-              joinRoom(false);
-            }
-          }}>Join Room</button>
-          <button onClick={() => {
-            if (name.trim()) {
-              localStorage.setItem('bj_name', name);
-              playWithRandom();
-            }
-          }}>Play with Random</button>
-        </div>
-        <p className="score">Score: {score.wins}/{score.games}</p>
-      </div>
-    );
-  }
-
-  if (status === 'searching') {
-    return (
-      <div className="App">
-        <h2>🔍 Waiting in queue for random match...</h2>
-      </div>
-    );
-  }
-
-  if (!game) return <div className="App">Loading game...</div>;
+  }, [gameState?.status]);
 
   return (
-    <div className="App">
-      <h2>{game.your_name} vs {game.opponent_name}</h2>
-      <p>Score: {score.wins}/{score.games}</p>
-      <p>Your hand: {game.your_hand.join(', ')} (value: {game.your_value})</p>
-      {/* <p>Opponent cards: {game.opponent_count} {game.opponent_value !== undefined ? `(value: ${game.opponent_value})` : ''}</p> */}
+    <div className="container">
+      <h1>🃏 Online Blackjack</h1>
 
-      {game.status === 'finished' ? (
-        <>
-          <p>Opponent's hand: {game.opponent_hand.join(', ')}</p>
-          <p>
-            Result: {
-              game.winner === player ? '🎉 You Win!' :
-              game.winner === 'draw' ? '🤝 Draw' :
-              '😞 You Lose'
-            }
-          </p>
-          <button onClick={() => {
-            setStatus('menu');
-            setRoom('');
-            setGame(null);
-          }}>Return to Menu</button>
-          {game.winner === player && setScore(s => ({ wins: s.wins + 1, games: s.games + 1 }))}
-          {game.winner !== player && setScore(s => ({ ...s, games: s.games + 1 }))}
-        </>
-      ) : (
-        game.turn === player ? (
-          <>
-            <button onClick={() => makeMove('hit')}>Hit</button>
-            <button onClick={() => makeMove('stand')}>Stand</button>
-          </>
-        ) : <p>⏳ Waiting for opponent...</p>
+      {!room && (
+        <div className="menu">
+          <input
+            placeholder="Enter your name"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+          />
+          <button onClick={startGame} disabled={loading}>Create Room</button>
+          <button onClick={joinGame} disabled={loading}>Join Room</button>
+          {error && <p className="error">{error}</p>}
+        </div>
+      )}
+
+      {room && gameState && (
+        <div className="game">
+          <div className="names">
+            {gameState.your_name} vs {gameState.opponent_name}
+          </div>
+          <div className="score">
+            Score: {score.wins}/{score.games}
+          </div>
+
+          <div className="hand">
+            <h3>Your Hand ({gameState.your_value})</h3>
+            <div className="cards">{renderCards(gameState.your_hand)}</div>
+          </div>
+
+          {gameState.status === "finished" && (
+            <div className="result">
+              <p>
+                {gameState.winner === player
+                  ? "You win!"
+                  : gameState.winner === "draw"
+                  ? "Push (Draw)"
+                  : "You lose."}
+              </p>
+              <h4>Opponent's Hand ({gameState.opponent_value})</h4>
+              <div className="cards">
+                {renderCards(gameState.opponent_hand)}
+              </div>
+              <button onClick={resetGame}>Back to Menu</button>
+            </div>
+          )}
+
+          {gameState.status === "playing" && (
+            <div className="actions">
+              {turn ? (
+                <>
+                  <button onClick={() => sendAction("hit")}>Hit</button>
+                  <button onClick={() => sendAction("stand")}>Stand</button>
+                </>
+              ) : (
+                <p>Waiting for opponent...</p>
+              )}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
 }
-
-export default App;
