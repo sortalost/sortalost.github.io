@@ -4,24 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack Game</title>
-    <link rel="stylesheet" href="/blackjack/styles.css">
+    <link rel="stylesheet" href="/blackjack/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>♠ Blackjack Game ♠</h1>
-        <div id="menu">
-            <input type="text" id="playerName" placeholder="Enter your name" />
-            <button id="createRoomBtn">Create Room</button>
-            <button id="joinRoomBtn">Join Room</button>
-            <button id="randomMatchBtn">Random Match</button>
-        </div>
-        <div id="game" class="hidden">
-            <h2 id="roomInfo"></h2>
+        <h1>Blackjack Game</h1>
+        <div id="gameArea" class="hidden">
+            <h2 id="status"></h2>
             <div id="yourHand"></div>
             <div id="opponentHand"></div>
-            <div id="status"></div>
-            <button id="hitBtn">Hit</button>
-            <button id="standBtn">Stand</button>
+            <button id="hitButton">Hit</button>
+            <button id="standButton">Stand</button>
+            <button id="newGameButton" class="hidden">New Game</button>
+        </div>
+        <div id="roomArea">
+            <input type="text" id="roomInput" placeholder="Room ID">
+            <input type="text" id="nameInput" placeholder="Your Name">
+            <button id="createRoomButton">Create Room</button>
+            <button id="joinRoomButton">Join Room</button>
+            <button id="randomMatchButton">Random Match</button>
         </div>
     </div>
     <script src="/blackjack/script.js"></script>

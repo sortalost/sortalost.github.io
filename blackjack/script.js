@@ -1,114 +1,110 @@
-const API_BASE_URL = "https://sortalost.is-a.dev/bj_api";
-let roomName = "";
-let playerId = "";
-let playerName = "";
+const baseUrl = '/bj_api';
+let roomId = '';
+let playerId = '';
 
-document.getElementById("createRoomBtn").addEventListener("click", createRoom);
-document.getElementById("joinRoomBtn").addEventListener("click", joinRoom);
-document.getElementById("randomMatchBtn").addEventListener("click", randomMatch);
-document.getElementById("hitBtn").addEventListener("click", () => makeMove("hit"));
-document.getElementById("standBtn").addEventListener("click", () => makeMove("stand"));
+document.getElementById('createRoomButton').addEventListener('click', createRoom);
+document.getElementById('joinRoomButton').addEventListener('click', joinRoom);
+document.getElementById('randomMatchButton').addEventListener('click', randomMatch);
+document.getElementById('hitButton').addEventListener('click', () => playerAction('hit'));
+document.getElementById('standButton').addEventListener('click', () => playerAction('stand'));
 
-function showGame() {
-    document.getElementById("menu").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+function showGameArea() {
+    document.getElementById('gameArea').classList.remove('hidden');
+    document.getElementById('roomArea').classList.add('hidden');
 }
 
-function hideGame() {
-    document.getElementById("menu").classList.remove("hidden");
-    document.getElementById("game").classList.add("hidden");
-}
+function createRoom() {
+    const room = document.getElementById('roomInput').value;
+    const name = document.getElementById('nameInput').value;
 
-async function createRoom() {
-    playerName = document.getElementById("playerName").value;
-    roomName = prompt("Enter room name:");
-    if (!roomName) return;
-
-    const response = await fetch(`${API_BASE_URL}/create_room`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room: roomName, name: playerName })
+    fetch(`${baseUrl}/create_room`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room, name })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            roomId = room;
+            playerId = 'p1';
+            showGameArea();
+            updateGameState();
+        } else {
+            alert(data.error);
+        }
     });
-
-    if (response.ok) {
-        playerId = "p1";
-        showGame();
-        document.getElementById("roomInfo").innerText = `Room: ${roomName} | You: ${playerName}`;
-        pollGameState();
-    } else {
-        alert("Error creating room: " + (await response.json()).message);
-    }
 }
 
-async function joinRoom() {
-    playerName = document.getElementById("playerName").value;
-    roomName = prompt("Enter room name:");
-    if (!roomName) return;
+function joinRoom() {
+    const room = document.getElementById('roomInput').value;
+    const name = document.getElementById('nameInput').value;
 
-    const response = await fetch(`${API_BASE_URL}/join_room`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room: roomName, name: playerName })
+    fetch(`${baseUrl}/join_room`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room, name })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            roomId = room;
+            playerId = 'p2';
+            showGameArea();
+            updateGameState();
+        } else {
+            alert(data.error);
+        }
     });
-
-    if (response.ok) {
-        playerId = "p2";
-        showGame();
-        document.getElementById("roomInfo").innerText = `Room: ${roomName} | You: ${playerName}`;
-        pollGameState();
-    } else {
-        alert("Error joining room: " + (await response.json()).message);
-    }
 }
 
-async function randomMatch() {
-    playerName = document.getElementById("playerName").value;
+function randomMatch() {
+    const name = document.getElementById('nameInput').value;
 
-    const response = await fetch(`${API_BASE_URL}/random_match`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: playerName })
+    fetch(`${baseUrl}/random_match`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.room) {
+            roomId = data.room;
+            playerId = data.player;
+            showGameArea();
+            updateGameState();
+        } else {
+            alert(data.status);
+        }
     });
-
-    if (response.ok) {
-        const data = await response.json();
-        roomName = data.room;
-        playerId = data.player;
-        showGame();
-        document.getElementById("roomInfo").innerText = `Room: ${roomName} | You: ${playerName}`;
-        pollGameState();
-    } else {
-        alert("Error finding match: " + (await response.json()).message);
-    }
 }
 
-async function makeMove(move) {
-    const response = await fetch(`${API_BASE_URL}/action`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ room: roomName, player: playerId, move: move })
+function playerAction(move) {
+    fetch(`${baseUrl}/action`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ room: roomId, player: playerId, move })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            updateGameState();
+        } else {
+            alert(data.error);
+        }
     });
-
-    if (response.ok) {
-        pollGameState();
-    } else {
-        alert("Error making move: " + (await response.json()).message);
-    }
 }
 
-async function pollGameState() {
-    const response = await fetch(`${API_BASE_URL}/state?room=${roomName}&player=${playerId}`);
-    const state = await response.json();
+function updateGameState() {
+    fetch(`${baseUrl}/state?room=${roomId}&player=${playerId}`)
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('status').innerText = `Status: ${data.status}`;
+        document.getElementById('yourHand').innerText = `Your Hand: ${data.your_hand.join(', ')} (Value: ${data.your_value})`;
+        document.getElementById('opponentHand').innerText = `Opponent's Hand: ${data.opponent_count} cards (Value: ${data.opponent_value})`;
 
-    document.getElementById("yourHand").innerText = `Your Hand: ${state.your_hand.join(", ")} (Value: ${state.your_value})`;
-    document.getElementById("opponentHand").innerText = `Opponent Hand: ${state.opponent_count} cards (Value: ${state.opponent_value})`;
-    document.getElementById("status").innerText = `Status: ${state.status}`;
-
-    if (state.status === "finished") {
-        const winner = state.winner === playerId ? "You win!" : state.winner === "draw" ? "It's a draw!" : "You lose!";
-        alert(winner);
-        hideGame();
-    } else {
-        setTimeout(pollGameState, 2000); // Poll every 2 seconds
-    }
+        if (data.status === 'finished') {
+            document.getElementById('status').innerText += ` - Winner: ${data.winner}`;
+            document.getElementById('newGameButton').classList.remove('hidden');
+        }
+    });
 }
