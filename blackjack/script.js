@@ -1,110 +1,100 @@
-const baseUrl = 'https://sortalost.is-a.dev/bj_api';
-let roomId = '';
-let playerId = '';
+const API = "https://sortalost.is-a.dev/bj_api";
+// let name = prompt("Enter your name") || "Player";
+// document.getElementById("player-name").textContent = name;
+let room = "", player = "";
 
-document.getElementById('createRoomButton').addEventListener('click', createRoom);
-document.getElementById('joinRoomButton').addEventListener('click', joinRoom);
-document.getElementById('randomMatchButton').addEventListener('click', randomMatch);
-document.getElementById('hitButton').addEventListener('click', () => playerAction('hit'));
-document.getElementById('standButton').addEventListener('click', () => playerAction('stand'));
+function showGameUI() {
+  document.getElementById("menu").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+}
 
-function showGameArea() {
-    document.getElementById('gameArea').classList.remove('hidden');
-    document.getElementById('roomArea').classList.add('hidden');
+function goBackToMenu() {
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+}
+
+function renderCards(hand) {
+  return hand.map(c => `<div class='card'>${c}</div>`).join('');
+}
+
+function updateState() {
+  fetch(`${API}/state?room=${room}&player=${player}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) return alert(data.error);
+      document.getElementById("game-status").textContent =
+        data.status === "finished"
+          ? (data.winner === player ? "You Win!" : data.winner === "draw" ? "Draw!" : "You Lose!")
+          : (data.turn === player ? "Your Turn" : "Opponent's Turn");
+
+      document.getElementById("your-hand").innerHTML = renderCards(data.your_hand);
+      document.getElementById("opponent-info").textContent =
+        data.status === "finished" ? "Opponent Hand: " + data.opponent_hand.join(", ") : `${data.opponent_count} cards`;
+
+      document.getElementById("actions").style.display =
+        data.status === "playing" && data.turn === player ? "block" : "none";
+
+      if (data.status !== "finished") setTimeout(updateState, 2000);
+    });
+}
+
+function makeMove(move) {
+  fetch(`${API}/action`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ room, player, move })
+  }).then(updateState);
 }
 
 function createRoom() {
-    const room = document.getElementById('roomInput').value;
-    const name = document.getElementById('nameInput').value;
-
-    fetch(`${baseUrl}/create_room`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, name })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            roomId = room;
-            playerId = 'p1';
-            showGameArea();
-            updateGameState();
-        } else {
-            alert(data.error);
-        }
-    });
+  room = prompt("Room name?");
+  player = "p1";
+  fetch(`${API}/create_room`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ room, name })
+  }).then(() => {
+    showGameUI();
+    waitForOpponent();
+  });
 }
 
 function joinRoom() {
-    const room = document.getElementById('roomInput').value;
-    const name = document.getElementById('nameInput').value;
+  room = prompt("Room name?");
+  player = "p2";
+  fetch(`${API}/join_room`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ room, name })
+  }).then(() => {
+    showGameUI();
+    updateState();
+  });
+}
 
-    fetch(`${baseUrl}/join_room`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room, name })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            roomId = room;
-            playerId = 'p2';
-            showGameArea();
-            updateGameState();
-        } else {
-            alert(data.error);
-        }
-    });
+function waitForOpponent() {
+  const poll = () => {
+    fetch(`${API}/state?room=${room}&player=p1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "playing") updateState();
+        else setTimeout(poll, 2000);
+      });
+  };
+  poll();
 }
 
 function randomMatch() {
-    const name = document.getElementById('nameInput').value;
-
-    fetch(`${baseUrl}/random_match`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name })
-    })
-    .then(response => response.json())
+  fetch(`${API}/random_match`, {
+    method: "POST",
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name })
+  }).then(res => res.json())
     .then(data => {
-        if (data.room) {
-            roomId = data.room;
-            playerId = data.player;
-            showGameArea();
-            updateGameState();
-        } else {
-            alert(data.status);
-        }
-    });
-}
-
-function playerAction(move) {
-    fetch(`${baseUrl}/action`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ room: roomId, player: playerId, move })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            updateGameState();
-        } else {
-            alert(data.error);
-        }
-    });
-}
-
-function updateGameState() {
-    fetch(`${baseUrl}/state?room=${roomId}&player=${playerId}`)
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('status').innerText = `Status: ${data.status}`;
-        document.getElementById('yourHand').innerText = `Your Hand: ${data.your_hand.join(', ')} (Value: ${data.your_value})`;
-        document.getElementById('opponentHand').innerText = `Opponent's Hand: ${data.opponent_count} cards (Value: ${data.opponent_value})`;
-
-        if (data.status === 'finished') {
-            document.getElementById('status').innerText += ` - Winner: ${data.winner}`;
-            document.getElementById('newGameButton').classList.remove('hidden');
-        }
+      if (data.error) return alert(data.error);
+      room = data.room;
+      player = data.player;
+      showGameUI();
+      updateState();
     });
 }
