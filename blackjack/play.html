@@ -4,27 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackjack Game</title>
-    <link rel="stylesheet" href="/blackjack/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Blackjack Game</h1>
+        <div id="mainMenu">
+            <h2>Game Options</h2>
+            <button id="randomMatchButton">🎲 Random Match</button>
+            <button id="joinRoomButton">🚪 Join Existing Room</button>
+            <button id="createRoomButton">✨ Create New Room</button>
+        </div>
+        <div id="roomInputArea" class="hidden">
+            <h2>Enter Room Details</h2>
+            <div class="input-group">
+                <input type="text" id="nameInput" placeholder="Your Name" required>
+                <input type="text" id="roomInput" placeholder="Room ID" class="room-input" required>
+            </div>
+            <button id="submitRoomButton">Join Game</button>
+        </div>
         <div id="gameArea" class="hidden">
-            <h2 id="status"></h2>
-            <div id="yourHand"></div>
-            <div id="opponentHand"></div>
-            <button id="hitButton">Hit</button>
-            <button id="standButton">Stand</button>
-            <button id="newGameButton" class="hidden">New Game</button>
-        </div>
-        <div id="roomArea">
-            <input type="text" id="roomInput" placeholder="Room ID">
-            <input type="text" id="nameInput" placeholder="Your Name">
-            <button id="createRoomButton">Create Room</button>
-            <button id="joinRoomButton">Join Room</button>
-            <button id="randomMatchButton">Random Match</button>
-        </div>
+                <h2 id="status"></h2>
+                <div id="yourHand"></div>
+                <div id="opponentHand" class="hidden"></div>
+                <div id="gameControls" class="hidden">
+                    <button id="hitButton">Hit</button>
+                    <button id="standButton">Stand</button>
+                </div>
+                <div id="waitingMessage" class="hidden">Waiting for opponent...</div>
+                <div id="endGameMessage" class="hidden">
+                    <div id="resultText"></div>
+                    <button id="newGameButton">New Game</button>
+                </div>
+                <div id="loading" class="hidden">
+                    <span class="loader"></span> Searching for opponent...
+                </div>
+            </div>
     </div>
-    <script src="/blackjack/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
