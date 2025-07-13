@@ -1,4 +1,4 @@
-const baseUrl = '/bj_api';
+const baseUrl = 'https://sortalost.is-a.dev/bj_api';
 let roomId = '';
 let playerId = '';
 
