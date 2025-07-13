@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack Game</title>
+    <link rel="stylesheet" href="/blackjack/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>♠ Blackjack Game ♠</h1>
+        <div id="menu">
+            <input type="text" id="playerName" placeholder="Enter your name" />
+            <button id="createRoomBtn">Create Room</button>
+            <button id="joinRoomBtn">Join Room</button>
+            <button id="randomMatchBtn">Random Match</button>
+        </div>
+        <div id="game" class="hidden">
+            <h2 id="roomInfo"></h2>
+            <div id="yourHand"></div>
+            <div id="opponentHand"></div>
+            <div id="status"></div>
+            <button id="hitBtn">Hit</button>
+            <button id="standBtn">Stand</button>
+        </div>
+    </div>
+    <script src="/blackjack/script.js"></script>
+</body>
+</html>
