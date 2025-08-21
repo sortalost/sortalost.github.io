@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Blackjack Online</title>
+  <link rel="stylesheet" href="/blackjack/style.css" />
+</head>
+<body>
+  <div id="main">
+    <h1>♠ Blackjack ♠</h1>
+
+    <div id="menu">
+      <button onclick="randomMatch()">Random Match</button>
+      <button onclick="createRoom()">Create Room</button>
+      <button onclick="joinRoom()">Join Room</button>
+    </div>
+
+    <div id="game" class="hidden">
+      <h2 id="game-status"></h2>
+      <div>
+        <h3>Your Hand</h3>
+        <div id="your-hand" class="cards"></div>
+      </div>
+      <div>
+        <h3>Opponent</h3>
+        <div id="opponent-info"></div>
+      </div>
+      <div id="actions">
+        <button onclick="makeMove('hit')">Hit</button>
+        <button onclick="makeMove('stand')">Stand</button>
+      </div>
+      <button onclick="goBackToMenu()">Main Menu</button>
+    </div>
+  </div>
+  <script src="/blackjack/script.js"></script>
+</body>
+</html>
