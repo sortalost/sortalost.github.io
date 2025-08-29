@@ -33,5 +33,16 @@
     "url":"https://devils.neocities.org/",
     "banner":"https://64.media.tumblr.com/777717d122b4e7d3ae82524b44d21f67/tumblr_inline_pswuk76Sda1w1xdc5_1280.gif",
     "style":""
+  },
+  "evergreen": {
+    "url":"https://itsevergreen.rip/",
+    "banner":"https://webring.lain.la/evergreen.png",
+    "style":"height:31px;width:88px"
+  },
+  "xn-neko" :{
+    "url":"https://xn--z7x.xn--6frz82g/",
+    "banner":"https://webring.lain.la/xn-neko.gif",
+    "style":""
   }
+
 }
