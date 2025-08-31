@@ -1,9 +1,30 @@
 {
-  "Dance wave - Hungary": "https://dancewave.online/dance.mp3",
-  "Coventry Hospital Radio":"https://eu9.fastcast4u.com/proxy/coventry?mp=/1",
-  "MANGORADIO - Germany": "https://mangoradio.stream.laut.fm/mangoradio",
-  "Classic Vinyl HD - USA": "https://icecast.walmradio.com:8443/classic",
-  "Smooth jazz florida - USA":"https://vip2.fastcast4u.com/proxy/wsjf?mp=/1",
-  "Radio RFM 99.7 - Germnay":"https://icecast.radiorfm.de/rfm.mp3",
-  "Death metal radio by Bob! - Germany": "https://regiocast.streamabc.net/regc-radiobobdeathmetal8709679-mp3-192-6241857"  
+  "Dance wave - Hungary": {
+    "stream": "https://dancewave.online/dance.mp3",
+    "url": "https://dancewave.online/"
+  },
+  "Coventry Hospital Radio": {
+    "stream": "https://eu9.fastcast4u.com/proxy/coventry?mp=/1",
+    "url": "https://coventryhospitalradio.org/"
+  },
+  "MANGORADIO - Germany": {
+    "stream": "https://mangoradio.stream.laut.fm/mangoradio",
+    "url": "https://mangoradio.de/"
+  },
+  "Classic Vinyl HD - USA": {
+    "stream": "https://icecast.walmradio.com:8443/classic",
+    "url": "https://walmradio.com/classic/"
+  },
+  "Smooth jazz florida - USA": {
+    "stream": "https://vip2.fastcast4u.com/proxy/wsjf?mp=/1",
+    "url": "https://smoothjazzflorida.com/"
+  },
+  "Radio RFM 99.7 - Germnay": {
+    "stream": "https://icecast.radiorfm.de/rfm.mp3",
+    "url": "https://www.radiorfm.de/"
+  },
+  "Death metal radio by Bob! - Germany": {
+    "stream": "https://regiocast.streamabc.net/regc-radiobobdeathmetal8709679-mp3-192-6241857",
+    "url": "https://www.radiobob.de/bobs-death-metal-stream"
+  }
 }
