@@ -48,8 +48,13 @@
     "url":"https://meth.cat/",
     "banner":"https://meth.cat/img/btn/mcat.gif",
     "style":""
+  },
+  "davemilner":{
+    "url":"https://davemiller.neocities.org/",
+    "banner":"https://davemiller.neocities.org/images/davemiller_button.gif",
+    "style":""
   }
-
 }
+
 
 
