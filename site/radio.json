@@ -11,6 +11,10 @@
     "stream": "https://mangoradio.stream.laut.fm/mangoradio",
     "url": "https://mangoradio.de/"
   },
+  "THE Funhouse Radio!" :{
+    "stream":"https://das-edge11-live365-dal03.cdnstream.com/a02627?filetype=.mp3",
+    "url":"https://funhouseradio.com/"
+  },
   "Classic Vinyl HD - USA": {
     "stream": "https://icecast.walmradio.com:8443/classic",
     "url": "https://walmradio.com/classic/"
