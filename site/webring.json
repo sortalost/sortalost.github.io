@@ -58,8 +58,14 @@
     "url":"https://sadgrl.online/",
     "banner":"https://sadgrl.online/_astro/logo.C3AjZVvt_2gISNf.webp",
     "style":"width:88px;height:31px;border:0.5px solid #231879;"
+  },
+  "qmaury":{
+    "url":"https://qmaury.com/",
+    "banner":"https://qmaury.com/images/banners/8.png",
+    "style":"width:88px;height:31px;border:0.5px solid #a53f00;"
   }
 }
+
 
 
 
