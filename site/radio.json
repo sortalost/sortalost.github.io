@@ -1,5 +1,5 @@
 {
-  "Dance wave - Hungary": {
+  "Dancewave - Hungary": {
     "stream": "https://dancewave.online/dance.ogg",
     "url": "https://dancewave.online/"
   },
@@ -11,9 +11,9 @@
     "stream": "https://mangoradio.stream.laut.fm/mangoradio",
     "url": "https://mangoradio.de/"
   },
-  "THE Funhouse Radio!" :{
-    "stream":"https://das-edge11-live365-dal03.cdnstream.com/a02627?filetype=.mp3",
-    "url":"https://funhouseradio.com/"
+  "Retro Dancewave - Hungary" :{
+    "stream":"https://retro.dancewave.online/retrodance.ogg",
+    "url":"https://dancewave.online/tracklist-retro/"
   },
   "Classic Vinyl HD - USA": {
     "stream": "https://icecast.walmradio.com:8443/classic",
