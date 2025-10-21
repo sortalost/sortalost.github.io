@@ -4,19 +4,9 @@
     "banner": "https://dimden.dev/services/images/88x31.gif",
     "style":""
   },
-  "pastelhello":{
-    "url":"https://pastelhello.com",
-    "banner":"https://pastelhello.com/mybuttons/pcafebutton.png",
-    "style":""
-  },
   "Beelzebabe Button": {
   "url":"https://beelzebabe.neocities.org",
   "banner":"https://beelzebabe.neocities.org/home/assets/Buttons/beelzebabe-new-spirals.gif",
-    "style":""
-  },
-  "vilespace": {
-    "url":"http://vilespace.neocities.org/",
-    "banner":"https://vilespace.neocities.org/Media/vsbutton.gif",
     "style":""
   },
   "freckleskies": {
@@ -33,11 +23,6 @@
     "url":"https://devils.neocities.org/",
     "banner":"https://64.media.tumblr.com/777717d122b4e7d3ae82524b44d21f67/tumblr_inline_pswuk76Sda1w1xdc5_1280.gif",
     "style":""
-  },
-  "evergreen": {
-    "url":"https://itsevergreen.rip/",
-    "banner":"https://webring.lain.la/evergreen.png",
-    "style":"height:31px;width:88px"
   },
   "xn-neko" :{
     "url":"https://xn--z7x.xn--6frz82g/",
@@ -58,23 +43,9 @@
     "url":"https://sadgrl.online/",
     "banner":"https://sadgrl.online/_astro/logo.C3AjZVvt_2gISNf.webp",
     "style":"width:88px;height:31px;border:0.5px solid #231879;"
-  },
-  "qmaury":{
-    "url":"https://qmaury.com/",
-    "banner":"https://qmaury.com/images/banners/8.png",
-    "style":"width:88px;height:31px;border:0.5px solid #a53f00;"
-  },
-  "notnite":{
-    "url":"https://notnite.com/",
-    "banner":"https://notnite.com/buttons/notnite.png",
-    "style":""
-  },
-  "kneesox":{
-    "url":"https://kneesox.moe",
-    "banner":"https://kneesox.moe/img/buttons/kneesox.png",
-    "style":""
   }
 }
+
 
 
 
